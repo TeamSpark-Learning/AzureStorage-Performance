@@ -37,7 +37,9 @@ namespace AzPerf.CLI.Menu
 
         public static void UploadSinglePageFileMultipleThreadsSmart()
         {
-
+            var scenario = new UploadSinglePageFileMultipleThreadsSmart();
+            var task = Task.Run(scenario.RunAsync);
+            task.Wait();
         }
 
         public static void DownloadSinglePageFileMultipleThreads()
