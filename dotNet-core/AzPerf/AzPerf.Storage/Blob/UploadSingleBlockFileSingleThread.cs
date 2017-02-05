@@ -44,7 +44,8 @@ namespace AzPerf.Storage.Blob
 
         protected override async Task DoWorkAsync()
         {
-            await Task.Delay(500);
+            var blob = BlobContainer.GetBlockBlobReference(Guid.NewGuid().ToString("N"));
+            await blob.UploadFromFileAsync(FilePath);
         }
 
         protected override async Task CleanupAsync()
