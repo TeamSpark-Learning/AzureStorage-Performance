@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzPerf.Storage
 {
@@ -10,8 +15,34 @@ namespace AzPerf.Storage
         protected abstract Task DoWorkAsync();
         protected abstract Task CleanupAsync();
 
+        protected CloudStorageAccount StorageAccount { get; private set; }
+        protected CloudBlobContainer BlobContainer { get; private set; }
+
+        protected async Task ConnectAzureStorageAsync()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("myconfigs.json");
+
+            var configuration = builder.Build();
+
+            var accountName = configuration["AccountName"];
+            var accountKey = configuration["AccountKey"];
+
+            var cred = new StorageCredentials(accountName, accountKey);
+            StorageAccount = new CloudStorageAccount(cred, false);
+
+            BlobContainer = StorageAccount
+                .CreateCloudBlobClient()
+                .GetContainerReference(DateTime.UtcNow.ToString("yyyy-MM-dd-hh-mm-ss"));
+
+            await BlobContainer.CreateIfNotExistsAsync();
+        }
+
         public async Task RunAsync()
         {
+            await ConnectAzureStorageAsync();
+
             try
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -33,6 +64,12 @@ namespace AzPerf.Storage
                 Console.WriteLine("Finished.");
 
                 Console.WriteLine("Total time: {0}", timer.Elapsed);
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                throw;
             }
             finally
             {
