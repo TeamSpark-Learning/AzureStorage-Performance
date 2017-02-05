@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using AzPerf.Storage;
 
 namespace AzPerf.CLI.Menu
 {
@@ -70,9 +72,25 @@ namespace AzPerf.CLI.Menu
         public Action Action { get; private set; }
 
         public MenuItem(string title, Action action)
+            : this(title)
+        {
+            Action = action;
+        }
+
+        public MenuItem(string title, StoragePerformanceBase scenario)
+            : this(title)
+        {
+            var action = new Action(() =>
+            {
+                var task = Task.Run(scenario.RunAsync);
+                task.Wait();
+            });
+            Action = action;
+        }
+
+        private MenuItem(string title)
         {
             Title = title;
-            Action = action;
         }
     }
 }
