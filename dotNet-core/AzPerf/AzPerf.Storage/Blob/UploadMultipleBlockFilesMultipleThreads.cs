@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AzPerf.Storage.Helpers;
@@ -10,6 +11,7 @@ namespace AzPerf.Storage.Blob
     {
         protected int FilesCount { get; set; }
         protected int ThreadsCount { get; set; }
+        protected int FileSizeInMb { get; set; }
         protected ConcurrentBag<string> Files = new ConcurrentBag<string>();
 
         protected async Task InitializeFilesCountAsync()
@@ -78,16 +80,26 @@ namespace AzPerf.Storage.Blob
                 return;
             }
 
+            FileSizeInMb = size;
+
+            var tasks = new List<Task>();
             for (var i = 0; i < FilesCount; i++)
             {
-                var filePath = Path.GetTempFileName();
-                Files.Add(filePath);
-
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine(filePath);
-
-                await FileHelper.CreateFileWithRandomContentAsync(filePath, size);
+                tasks.Add(CreateFile());
             }
+
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task CreateFile()
+        {
+            var filePath = Path.GetTempFileName();
+
+            await FileHelper.CreateFileWithRandomContentAsync(filePath, FileSizeInMb);
+            Files.Add(filePath);
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(filePath);
         }
 
         protected override async Task InitializeAsync()
