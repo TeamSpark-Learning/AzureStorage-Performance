@@ -1,46 +1,45 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using AzPerf.Storage.Helpers;
 
 namespace AzPerf.Storage.Blob
 {
     public class UploadSingleBlockFileSingleThread : StoragePerformanceBase
     {
-        protected string filePath;
+        protected string FilePath;
 
-        protected override async Task InitializeAsync()
+        protected async Task InitializeFileAsync()
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("Chose file size in MB: ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
             var input = Console.ReadLine();
 
             int size;
-            if (int.TryParse(input, out size))
+            if (!int.TryParse(input, out size))
             {
-                if (size < 1)
-                {
-                    await InitializeAsync();
-                }
-                else
-                {
-                    filePath = Path.GetTempFileName();
-                    var rnd = new Random();
-
-                    using (var writer = File.Create(filePath))
-                    {
-                        for (var i = 0; i < size; i++)
-                        {
-                            var buffer = new byte[1024 * 1024];
-                            rnd.NextBytes(buffer);
-
-                            await writer.WriteAsync(buffer, i * 1024 * 1024, buffer.Length);
-                        }
-                    }
-                }
+                await InitializeFileAsync();
+                return;
             }
-            else
+
+            if (size < 1)
             {
-                await InitializeAsync();
+                await InitializeFileAsync();
+                return;
             }
+
+            FilePath = Path.GetTempFileName();
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(FilePath);
+
+            await FileHelper.CreateFileWithRandomContentAsync(FilePath, size);
+        }
+
+        protected override async Task InitializeAsync()
+        {
+            await InitializeFileAsync();
         }
 
         protected override async Task DoWorkAsync()
@@ -50,9 +49,9 @@ namespace AzPerf.Storage.Blob
 
         protected override async Task CleanupAsync()
         {
-            if (File.Exists(filePath))
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
             {
-                File.Delete(filePath);
+                File.Delete(FilePath);
             }
         }
     }
