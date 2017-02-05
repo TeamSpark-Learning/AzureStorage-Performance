@@ -18,16 +18,26 @@ namespace AzPerf.CLI.Menu
         {
             if (!string.IsNullOrEmpty(Title))
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(Title);
             }
             for (var i = 0; i < Items.Count; i++)
             {
-                Console.WriteLine("{0}. {1}", i, Items[i].Title);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("{0}. ", i);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(Items[i].Title);
             }
 
-            Console.WriteLine("q. Quit");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("q. ");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Quit");
+
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("Make your choice: ");
 
+            Console.ForegroundColor = ConsoleColor.Magenta;
             var input = Console.ReadLine();
 
             if (input == "q")
