@@ -14,7 +14,6 @@ namespace AzPerf.Storage
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Initializing...");
-            await CleanupAsync();
             await InitializeAsync();
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Initialized.");
