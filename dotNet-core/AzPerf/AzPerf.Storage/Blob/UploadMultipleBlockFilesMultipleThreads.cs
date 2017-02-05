@@ -45,13 +45,13 @@ namespace AzPerf.Storage.Blob
             int count;
             if (!int.TryParse(input, out count))
             {
-                await InitializeFilesCountAsync();
+                await InitializeThreadsCountAsync();
                 return;
             }
 
             if (count < 0)
             {
-                await InitializeFilesCountAsync();
+                await InitializeThreadsCountAsync();
                 return;
             }
 
