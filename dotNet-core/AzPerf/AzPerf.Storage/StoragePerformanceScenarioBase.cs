@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace AzPerf.Storage
 {
@@ -17,6 +18,7 @@ namespace AzPerf.Storage
 
         protected CloudStorageAccount StorageAccount { get; private set; }
         protected CloudBlobContainer BlobContainer { get; private set; }
+        protected CloudTable Table { get; private set; }
 
         protected async Task ConnectAzureStorageAsync()
         {
@@ -32,11 +34,19 @@ namespace AzPerf.Storage
             var cred = new StorageCredentials(accountName, accountKey);
             StorageAccount = new CloudStorageAccount(cred, false);
 
+            var name = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
+
             BlobContainer = StorageAccount
                 .CreateCloudBlobClient()
-                .GetContainerReference(DateTime.UtcNow.ToString("yyyy-MM-dd-hh-mm-ss"));
+                .GetContainerReference(string.Format("fldr{0}", name));
 
-            await BlobContainer.CreateIfNotExistsAsync();
+            Table = StorageAccount
+                .CreateCloudTableClient()
+                .GetTableReference(string.Format("tbl{0}", name));
+
+            await Task.WhenAll(
+                BlobContainer.CreateIfNotExistsAsync(),
+                Table.CreateIfNotExistsAsync());
         }
 
         public async Task RunAsync()

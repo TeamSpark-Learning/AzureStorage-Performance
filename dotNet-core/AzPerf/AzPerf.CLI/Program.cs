@@ -1,6 +1,7 @@
 ﻿using System;
 using AzPerf.CLI.Menu;
 using AzPerf.Storage.Blob;
+using AzPerf.Storage.Table;
 
 namespace AzPerf.CLI
 {
@@ -25,6 +26,7 @@ namespace AzPerf.CLI
             menu.Items.Add(new MenuItem("Blob performance", BlobPerformanceMenu.RootMenu));
             menu.Items.Add(new MenuItem("Blob cleanup", new BlobCleanup()));
             menu.Items.Add(new MenuItem("Table performance", TablePerformanceMenu.RootMenu));
+            menu.Items.Add(new MenuItem("Table cleanup", new TableCleanup()));
             menu.ShowMenu();
         }
     }
