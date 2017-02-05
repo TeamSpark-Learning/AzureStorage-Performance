@@ -5,7 +5,7 @@ using AzPerf.Storage.Helpers;
 
 namespace AzPerf.Storage.Blob
 {
-    public class UploadSingleBlockFileMultipleThreads : StoragePerformanceBase
+    public class UploadSingleBlockFileMultipleThreads : StoragePerformanceScenarioBase
     {
         protected string FilePath;
         protected int FileSize;

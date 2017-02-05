@@ -2,7 +2,7 @@
 
 namespace AzPerf.Storage.Blob
 {
-    public class DownloadSinglePageFileSingleThread : StoragePerformanceBase
+    public class DownloadSinglePageFileSingleThread : StoragePerformanceScenarioBase
     {
         protected override async Task InitializeAsync()
         {

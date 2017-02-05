@@ -6,7 +6,7 @@ using AzPerf.Storage.Helpers;
 
 namespace AzPerf.Storage.Blob
 {
-    public class UploadMultipleBlockFilesMultipleThreads : StoragePerformanceBase
+    public class UploadMultipleBlockFilesMultipleThreads : StoragePerformanceScenarioBase
     {
         protected int FilesCount { get; set; }
         protected int ThreadsCount { get; set; }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AzPerf.Storage
 {
-    public abstract class StoragePerformanceBase
+    public abstract class StoragePerformanceScenarioBase
     {
         protected abstract Task InitializeAsync();
         protected abstract Task DoWorkAsync();

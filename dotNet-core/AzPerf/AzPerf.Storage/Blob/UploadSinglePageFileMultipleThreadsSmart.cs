@@ -5,7 +5,7 @@ using AzPerf.Storage.Helpers;
 
 namespace AzPerf.Storage.Blob
 {
-    public class UploadSinglePageFileMultipleThreadsSmart : StoragePerformanceBase
+    public class UploadSinglePageFileMultipleThreadsSmart : StoragePerformanceScenarioBase
     {
         protected string FilePath;
         protected int FileSize;

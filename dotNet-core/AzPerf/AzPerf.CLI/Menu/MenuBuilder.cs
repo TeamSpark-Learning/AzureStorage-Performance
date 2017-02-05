@@ -77,7 +77,7 @@ namespace AzPerf.CLI.Menu
             Action = action;
         }
 
-        public MenuItem(string title, StoragePerformanceBase scenario)
+        public MenuItem(string title, StoragePerformanceScenarioBase scenario)
             : this(title)
         {
             var action = new Action(() =>
