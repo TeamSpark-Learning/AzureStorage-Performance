@@ -1,5 +1,6 @@
 ﻿using System;
 using AzPerf.CLI.Menu;
+using AzPerf.Storage.Blob;
 
 namespace AzPerf.CLI
 {
@@ -22,6 +23,7 @@ namespace AzPerf.CLI
         {
             var menu = new MenuBuilder("Welcome to Azure Storage Performance demo app!");
             menu.Items.Add(new MenuItem("Blob performance", BlobPerformanceMenu.RootMenu));
+            menu.Items.Add(new MenuItem("Blob cleanup", new BlobCleanup()));
             menu.Items.Add(new MenuItem("Table performance", TablePerformanceMenu.RootMenu));
             menu.ShowMenu();
         }
