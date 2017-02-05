@@ -30,7 +30,9 @@ namespace AzPerf.CLI.Menu
 
         public static void UploadMultipleBlockFilesMultipleThreads()
         {
-
+            var scenario = new UploadMultipleBlockFilesMultipleThreads();
+            var task = Task.Run(scenario.RunAsync);
+            task.Wait();
         }
 
         public static void UploadSinglePageFileMultipleThreadsSmart()
