@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AzPerf.Storage.Helpers;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzPerf.Storage.Blob
 {
@@ -76,7 +79,34 @@ namespace AzPerf.Storage.Blob
 
         protected override async Task DoWorkAsync()
         {
-            await Task.Delay(500);
+            var fileInfo = new FileInfo(FilePath);
+
+            var blob = BlobContainer.GetPageBlobReference(Guid.NewGuid().ToString("N"));
+            await blob.CreateAsync(fileInfo.Length);
+
+            var tasks = new List<Task>();
+
+            using (var fileStream = new FileStream(FilePath, FileMode.Open))
+            {
+                var buffer = new byte[512];
+
+                while (fileStream.Position < fileStream.Length)
+                {
+                    await fileStream.ReadAsync(buffer, 0, 512);
+                    if (buffer.Any(b => b != 0))
+                    {
+                        tasks.Add(UploadPageAsync(blob, buffer, fileStream.Position));
+                    }
+                }
+
+                await Task.WhenAll(tasks);
+            }
+        }
+
+        private async Task UploadPageAsync(CloudPageBlob blob, byte[] pageBuffer, long position)
+        {
+            var memStream = new MemoryStream(pageBuffer);
+            await blob.WritePagesAsync(memStream, position, null);
         }
 
         protected override async Task CleanupAsync()
